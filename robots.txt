@@ -1,0 +1,79 @@
+# robots.txt for https://www.scanvice.com
+# Last updated: March 2026
+
+# -------------------------------
+# Default rules for all crawlers
+# -------------------------------
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /account/
+Disallow: /login*
+Disallow: /signup*
+Disallow: /reset-password*
+Disallow: /api/
+Disallow: /cdn-cgi/
+Disallow: /*?*sort=*
+Disallow: /*?*filter=*
+Disallow: /*?*page=*
+Disallow: /*?*utm_source=*
+Disallow: /*?*utm_medium=*
+Disallow: /*?*utm_campaign=*
+
+# Allow important assets for indexing
+Allow: /assets/
+Allow: /images/
+Allow: /favicon.ico
+Allow: /logo*
+
+# -------------------------------
+# Sitemap location
+# -------------------------------
+Sitemap: https://www.scanvice.com/sitemap.xml
+
+# -------------------------------
+# Crawl-delay (optional)
+# Only if high traffic from crawlers is detected
+# -------------------------------
+# Crawl-delay: 10
+
+# -------------------------------
+# Special rules for aggressive AI / training bots
+# Prevent scraping or model training
+# -------------------------------
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+# -------------------------------
+# Allow Google AdsBot & image indexing
+# -------------------------------
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /assets/
+Allow: /images/
+Allow: /logo*
