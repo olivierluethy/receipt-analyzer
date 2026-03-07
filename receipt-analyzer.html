@@ -379,20 +379,37 @@ function hideLoadingModal() {
 // Email submission
 submitEmailBtn.addEventListener('click', () => {
   const email = notifyEmail.value.trim();
+
   if (!email || !email.includes('@')) {
     notifyEmail.classList.add('border-accent');
     return;
   }
-  
-  // Show success state
-  document.querySelector('#overloadState .space-y-3').classList.add('hidden');
-  document.querySelector('#overloadState > p').classList.add('hidden');
-  emailSuccess.classList.remove('hidden');
-  
-  // Auto close after 2 seconds
-  setTimeout(() => {
-    hideLoadingModal();
-  }, 2000);
+
+  // Email an Server senden
+  fetch('save_email.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `email=${encodeURIComponent(email)}`
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Show success state
+      document.querySelector('#overloadState .space-y-3').classList.add('hidden');
+      document.querySelector('#overloadState > p').classList.add('hidden');
+      emailSuccess.classList.remove('hidden');
+
+      // Auto close after 2 seconds
+      setTimeout(() => {
+        hideLoadingModal();
+      }, 2000);
+    } else {
+      alert(data.message || 'Fehler beim Speichern der Email');
+    }
+  })
+  .catch(() => {
+    alert('Serverfehler, bitte später versuchen');
+  });
 });
 
 closeOverloadBtn.addEventListener('click', hideLoadingModal);
