@@ -5,35 +5,108 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Receipt Analyzer</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+<link rel="icon" type="image/x-icon" href="logo.ico">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#0f0e0d',
+          paper: '#f5f0e8',
+          receipt: '#fffdf7',
+          accent: '#e8521a',
+          accent2: '#2a7a4b',
+          muted: '#8c8479',
+          border: '#d4cfc5',
+        },
+        fontFamily: {
+          syne: ['Syne', 'sans-serif'],
+          mono: ['DM Mono', 'monospace'],
+        },
+        boxShadow: {
+          'custom': '0 4px 16px rgba(15,14,13,0.12)',
+          'btn': '0 8px 24px rgba(232,82,26,0.35)',
+        },
+        animation: {
+          'spin-fast': 'spin 0.7s linear infinite',
+          'slide-up': 'slideUp 0.4s ease',
+          'fade-in': 'fadeIn 0.3s ease',
+          'pulse-slow': 'pulse 2s ease-in-out infinite',
+        },
+        keyframes: {
+          slideUp: {
+            'from': { opacity: '0', transform: 'translateY(24px)' },
+            'to': { opacity: '1', transform: 'translateY(0)' },
+          },
+          fadeIn: {
+            'from': { opacity: '0' },
+            'to': { opacity: '1' },
+          },
+        },
+      },
+    },
+  }
+</script>
+<style>
+  /* Minimal custom styles that can't be done with Tailwind */
+  body::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 18px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='18'%3E%3Cpath d='M0,8 Q5,2 10,8 Q15,14 20,8 Q25,2 30,8 Q35,14 40,8 Q45,2 50,8 Q55,14 60,8 Q65,2 70,8 Q75,14 80,8 Q85,2 90,8 Q95,14 100,8 L100,0 L0,0 Z' fill='%23f5f0e8'/%3E%3C/svg%3E") repeat-x bottom;
+    background-color: #0f0e0d;
+    background-size: 100px 18px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
 
-<div class="page">
-  <header>
-    <div class="header-title">
-      <div class="logo-line">Receipt<span>Scan</span></div>
-      <div class="subtitle">Receipt Analyzer · Claude AI</div>
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .divider::before,
+  .divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: calc(50% - 60px);
+    height: 1px;
+    background: #d4cfc5;
+  }
+  .divider::before { left: 0; }
+  .divider::after { right: 0; }
+</style>
+</head>
+<body class="bg-paper text-ink font-mono min-h-screen overflow-x-hidden">
+
+<div class="max-w-[680px] mx-auto px-6 pt-10 pb-20">
+  <header class="flex items-center justify-between mb-7">
+    <div class="leading-none">
+      <div class="font-syne font-extrabold text-[clamp(1.4rem,5vw,2rem)] tracking-tight text-ink">
+        Scan<span class="text-accent">Vice</span>
+      </div>
+      <div class="text-[0.62rem] tracking-[0.18em] uppercase text-muted mt-1">Receipt Analyzer</div>
     </div>
-    <button class="refresh-btn" id="refreshBtn" title="Reset">
+    <button class="bg-transparent border-[1.5px] border-border rounded-full w-[38px] h-[38px] flex items-center justify-center cursor-pointer text-muted shrink-0 transition-all duration-200 hover:border-ink hover:text-ink hover:rotate-90" id="refreshBtn" title="Reset">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/>
       </svg>
     </button>
   </header>
 
-  <!-- API Key -->
-  <div class="api-section">
-    <div class="api-input-wrap">
-      <input type="password" id="apiKey" placeholder="sk-ant-api03-..." autocomplete="off">
-    </div>
-  </div>
-
   <!-- Upload Zone -->
-  <div class="upload-zone" id="uploadZone">
+  <div class="upload-zone border-2 border-dashed border-border rounded-sm bg-receipt p-4 cursor-pointer transition-all duration-200 relative mb-2.5 flex items-center gap-3.5 hover:border-accent hover:bg-[#fff9f5] hover:shadow-custom" id="uploadZone">
     <input type="file" id="fileInput" accept="image/*" capture="environment">
-    <div class="upload-icon">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#0f0e0d" stroke-width="1.8">
+    <div class="w-7 h-7 shrink-0">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#0f0e0d" stroke-width="1.8" class="w-full h-full">
         <rect x="2" y="5" width="20" height="15" rx="1"/>
         <circle cx="12" cy="13" r="4"/>
         <circle cx="12" cy="13" r="1.8" fill="#e8521a" stroke="none"/>
@@ -41,15 +114,15 @@
       </svg>
     </div>
     <div>
-      <div class="upload-label">Upload Receipt</div>
-      <div class="upload-hint">PNG, JPG, WEBP · Click or drag and drop</div>
+      <div class="font-syne font-bold text-[0.9rem] text-ink">Upload Receipt</div>
+      <div class="text-[0.68rem] text-muted mt-px">PNG, JPG, WEBP · Click or drag and drop</div>
     </div>
   </div>
 
-  <div class="divider">or</div>
+  <div class="divider text-center text-muted text-[0.65rem] tracking-[0.2em] uppercase my-6 relative">or</div>
 
   <!-- Camera Button -->
-  <button class="camera-btn" id="cameraBtn">
+  <button class="flex items-center justify-center gap-2.5 w-full py-3.5 bg-ink text-paper border-none font-syne font-bold text-[0.9rem] tracking-[0.08em] cursor-pointer rounded-sm transition-all duration-200 mb-4 hover:bg-accent active:scale-[0.99]" id="cameraBtn">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
       <circle cx="12" cy="13" r="4"/>
@@ -58,40 +131,96 @@
   </button>
 
   <!-- Preview -->
-  <div class="preview-wrap" id="previewWrap">
-    <img id="previewImg" src="" alt="Preview">
-    <div class="preview-tag">Preview</div>
-    <button class="remove-btn" id="removeBtn" title="Remove">×</button>
+  <div class="hidden relative mb-4 border-[1.5px] border-border rounded-sm overflow-hidden bg-receipt" id="previewWrap">
+    <img id="previewImg" src="" alt="Preview" class="w-full max-h-80 object-contain block">
+    <div class="absolute top-2.5 left-2.5 bg-ink text-paper text-[0.62rem] tracking-[0.15em] px-2 py-0.5 uppercase">Preview</div>
+    <button class="absolute top-2.5 right-2.5 bg-accent text-white border-none w-7 h-7 rounded-full cursor-pointer text-base leading-none flex items-center justify-center" id="removeBtn" title="Remove">×</button>
   </div>
 
   <!-- Analyze Button -->
-  <button class="analyze-btn" id="analyzeBtn" disabled>
+  <button class="w-full py-4 bg-accent text-white border-none font-syne font-extrabold text-lg tracking-[0.1em] cursor-pointer rounded-sm transition-all duration-200 uppercase flex items-center justify-center gap-3 mb-8 disabled:bg-muted disabled:cursor-not-allowed disabled:transform-none hover:enabled:bg-[#c73f0a] hover:enabled:-translate-y-0.5 hover:enabled:shadow-btn" id="analyzeBtn" disabled>
     <span id="btnText">Analyze</span>
-    <div class="spinner" id="spinner"></div>
+    <div class="w-5 h-5 border-[2.5px] border-white/30 border-t-white rounded-full animate-spin-fast hidden" id="spinner"></div>
   </button>
 
   <!-- Results -->
-  <div class="results" id="results"></div>
+  <div class="hidden" id="results"></div>
 
-  <footer>Receipt Analyzer · Claude Vision API · 2025</footer>
+  <footer class="text-center pt-8 text-[0.65rem] tracking-[0.15em] text-muted uppercase">Receipt Analyzer · 2026</footer>
 </div>
 
 <!-- Camera Modal -->
-<div class="modal-overlay" id="cameraModal">
-  <div class="modal">
-    <div class="modal-header">
-      <span>📷 Camera</span>
-      <button class="modal-close" id="modalClose">×</button>
+<div class="hidden fixed inset-0 bg-ink/85 z-[1000] items-center justify-center p-5" id="cameraModal">
+  <div class="bg-ink rounded w-full max-w-[500px] overflow-hidden">
+    <div class="px-5 py-4 flex items-center justify-between border-b border-white/10">
+      <span class="font-syne font-bold text-[0.9rem] tracking-[0.1em] uppercase text-paper">📷 Camera</span>
+      <button class="bg-transparent border-none text-muted cursor-pointer text-xl p-1" id="modalClose">×</button>
     </div>
-    <video id="cameraVideo" autoplay playsinline muted></video>
-    <div class="modal-footer">
-      <button class="capture-btn" id="captureBtn">📸 Capture</button>
-      <button class="cancel-btn" id="cancelBtn">Cancel</button>
+    <video id="cameraVideo" autoplay playsinline muted class="w-full block bg-black"></video>
+    <div class="px-5 py-4 flex gap-2.5">
+      <button class="flex-1 py-3 bg-accent text-white border-none font-syne font-bold text-[0.9rem] tracking-[0.1em] cursor-pointer rounded-sm uppercase" id="captureBtn">📸 Capture</button>
+      <button class="px-5 py-3 bg-white/10 text-paper border-none font-mono text-[0.82rem] cursor-pointer rounded-sm" id="cancelBtn">Cancel</button>
     </div>
   </div>
 </div>
 
-<canvas id="snapCanvas" style="display:none"></canvas>
+<!-- Loading Modal -->
+<div class="hidden fixed inset-0 bg-ink/90 z-[1001] items-center justify-center p-5" id="loadingModal">
+  <div class="bg-receipt rounded-sm w-full max-w-md overflow-hidden animate-fade-in shadow-2xl">
+    <!-- Loading State -->
+    <div id="loadingState" class="p-8 text-center">
+      <div class="w-16 h-16 mx-auto mb-6 relative">
+        <div class="absolute inset-0 border-4 border-border rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-transparent border-t-accent rounded-full animate-spin"></div>
+        <div class="absolute inset-2 border-4 border-transparent border-b-accent2 rounded-full animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+      </div>
+      <h3 class="font-syne font-bold text-xl text-ink mb-2">Analyzing Receipt</h3>
+      <p class="text-muted text-sm">Processing your image with AI...</p>
+      <div class="flex justify-center gap-1 mt-4">
+        <span class="w-2 h-2 bg-accent rounded-full animate-pulse-slow" style="animation-delay: 0s;"></span>
+        <span class="w-2 h-2 bg-accent rounded-full animate-pulse-slow" style="animation-delay: 0.2s;"></span>
+        <span class="w-2 h-2 bg-accent rounded-full animate-pulse-slow" style="animation-delay: 0.4s;"></span>
+      </div>
+    </div>
+    
+    <!-- Overload State -->
+    <div id="overloadState" class="hidden p-8">
+      <div class="w-16 h-16 mx-auto mb-6 bg-accent/10 rounded-full flex items-center justify-center">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e8521a" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <h3 class="font-syne font-bold text-xl text-ink mb-2 text-center">System Overloaded</h3>
+      <p class="text-muted text-sm text-center mb-6 leading-relaxed">We're experiencing high demand right now. Leave your email and we'll notify you when the system is available again.</p>
+      
+      <div class="space-y-3">
+        <input type="email" id="notifyEmail" placeholder="your@email.com" class="w-full font-mono text-sm bg-white border-[1.5px] border-border rounded-sm px-4 py-3 outline-none text-ink transition-colors duration-150 focus:border-accent placeholder:text-border">
+        <button id="submitEmailBtn" class="w-full py-3.5 bg-accent text-white border-none font-syne font-bold text-sm tracking-[0.08em] cursor-pointer rounded-sm transition-all duration-200 uppercase hover:bg-[#c73f0a] disabled:bg-muted disabled:cursor-not-allowed">
+          Notify Me
+        </button>
+      </div>
+      
+      <button id="closeOverloadBtn" class="w-full mt-4 py-2 bg-transparent text-muted border-none font-mono text-xs cursor-pointer hover:text-ink transition-colors">
+        Close and try later
+      </button>
+      
+      <!-- Success Message -->
+      <div id="emailSuccess" class="hidden text-center py-4">
+        <div class="w-12 h-12 mx-auto mb-4 bg-accent2/10 rounded-full flex items-center justify-center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2a7a4b" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <p class="text-accent2 font-syne font-bold text-sm">You're on the list!</p>
+        <p class="text-muted text-xs mt-1">We'll email you when service resumes.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<canvas id="snapCanvas" class="hidden"></canvas>
 
 <script>
 const fileInput   = document.getElementById('fileInput');
@@ -103,7 +232,6 @@ const analyzeBtn  = document.getElementById('analyzeBtn');
 const spinner     = document.getElementById('spinner');
 const btnText     = document.getElementById('btnText');
 const results     = document.getElementById('results');
-const apiKeyInput = document.getElementById('apiKey');
 const cameraBtn   = document.getElementById('cameraBtn');
 const cameraModal = document.getElementById('cameraModal');
 const cameraVideo = document.getElementById('cameraVideo');
@@ -112,6 +240,13 @@ const cancelBtn   = document.getElementById('cancelBtn');
 const modalClose  = document.getElementById('modalClose');
 const snapCanvas  = document.getElementById('snapCanvas');
 const refreshBtn  = document.getElementById('refreshBtn');
+const loadingModal = document.getElementById('loadingModal');
+const loadingState = document.getElementById('loadingState');
+const overloadState = document.getElementById('overloadState');
+const notifyEmail = document.getElementById('notifyEmail');
+const submitEmailBtn = document.getElementById('submitEmailBtn');
+const closeOverloadBtn = document.getElementById('closeOverloadBtn');
+const emailSuccess = document.getElementById('emailSuccess');
 
 let currentImageBase64 = null;
 let currentMimeType    = null;
@@ -121,22 +256,29 @@ let cameraStream       = null;
 refreshBtn.addEventListener('click', () => {
   currentImageBase64  = null;
   currentMimeType     = null;
-  previewWrap.classList.remove('visible');
+  previewWrap.classList.add('hidden');
+  previewWrap.classList.remove('block');
   previewImg.src      = '';
   analyzeBtn.disabled = true;
   fileInput.value     = '';
-  results.classList.remove('visible');
+  results.classList.add('hidden');
+  results.classList.remove('block', 'animate-slide-up');
   results.innerHTML   = '';
   btnText.textContent = 'Analyze';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 // Upload
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('dragover', e => { 
+  e.preventDefault(); 
+  uploadZone.classList.add('border-accent', 'bg-[#fff9f5]', 'shadow-custom');
+});
+uploadZone.addEventListener('dragleave', () => {
+  uploadZone.classList.remove('border-accent', 'bg-[#fff9f5]', 'shadow-custom');
+});
 uploadZone.addEventListener('drop', e => {
   e.preventDefault();
-  uploadZone.classList.remove('dragover');
+  uploadZone.classList.remove('border-accent', 'bg-[#fff9f5]', 'shadow-custom');
   const file = e.dataTransfer.files[0];
   if (file && file.type.startsWith('image/')) loadFile(file);
 });
@@ -157,19 +299,23 @@ function loadFile(file) {
 
 function showPreview(src) {
   previewImg.src      = src;
-  previewWrap.classList.add('visible');
+  previewWrap.classList.remove('hidden');
+  previewWrap.classList.add('block');
   analyzeBtn.disabled = false;
-  results.classList.remove('visible');
+  results.classList.add('hidden');
+  results.classList.remove('block', 'animate-slide-up');
   results.innerHTML   = '';
 }
 
 removeBtn.addEventListener('click', () => {
   currentImageBase64  = null;
   currentMimeType     = null;
-  previewWrap.classList.remove('visible');
+  previewWrap.classList.add('hidden');
+  previewWrap.classList.remove('block');
   analyzeBtn.disabled = true;
   fileInput.value     = '';
-  results.classList.remove('visible');
+  results.classList.add('hidden');
+  results.classList.remove('block', 'animate-slide-up');
 });
 
 // Camera
@@ -181,7 +327,8 @@ async function openCamera() {
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     cameraVideo.srcObject = cameraStream;
-    cameraModal.classList.add('open');
+    cameraModal.classList.remove('hidden');
+    cameraModal.classList.add('flex');
   } catch (e) {
     alert('Camera not available: ' + e.message);
   }
@@ -189,7 +336,8 @@ async function openCamera() {
 
 function closeCamera() {
   if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
-  cameraModal.classList.remove('open');
+  cameraModal.classList.add('hidden');
+  cameraModal.classList.remove('flex');
 }
 
 captureBtn.addEventListener('click', () => {
@@ -203,115 +351,78 @@ captureBtn.addEventListener('click', () => {
   closeCamera();
 });
 
-// Analyze
+// Loading Modal Functions
+function showLoadingModal() {
+  loadingState.classList.remove('hidden');
+  overloadState.classList.add('hidden');
+  emailSuccess.classList.add('hidden');
+  loadingModal.classList.remove('hidden');
+  loadingModal.classList.add('flex');
+}
+
+function showOverloadState() {
+  loadingState.classList.add('hidden');
+  overloadState.classList.remove('hidden');
+  emailSuccess.classList.add('hidden');
+  // Reset email form
+  notifyEmail.value = '';
+  submitEmailBtn.disabled = false;
+  document.querySelector('#overloadState .space-y-3').classList.remove('hidden');
+  document.querySelector('#overloadState > p').classList.remove('hidden');
+}
+
+function hideLoadingModal() {
+  loadingModal.classList.add('hidden');
+  loadingModal.classList.remove('flex');
+}
+
+// Email submission
+submitEmailBtn.addEventListener('click', () => {
+  const email = notifyEmail.value.trim();
+  if (!email || !email.includes('@')) {
+    notifyEmail.classList.add('border-accent');
+    return;
+  }
+  
+  // Show success state
+  document.querySelector('#overloadState .space-y-3').classList.add('hidden');
+  document.querySelector('#overloadState > p').classList.add('hidden');
+  emailSuccess.classList.remove('hidden');
+  
+  // Auto close after 2 seconds
+  setTimeout(() => {
+    hideLoadingModal();
+  }, 2000);
+});
+
+closeOverloadBtn.addEventListener('click', hideLoadingModal);
+
+// Analyze - Shows loading state, then overload message (no API call)
 analyzeBtn.addEventListener('click', analyze);
 
-async function analyze() {
-  const apiKey = apiKeyInput.value.trim();
-  if (!apiKey) { alert('Please enter your API key.'); return; }
+function analyze() {
   if (!currentImageBase64) { alert('Please upload a receipt image first.'); return; }
 
   analyzeBtn.disabled   = true;
   btnText.textContent   = 'Analyzing…';
-  spinner.style.display = 'block';
-  results.classList.remove('visible');
-  results.innerHTML     = '';
+  spinner.classList.remove('hidden');
 
-  const prompt = `Analyze this receipt image and extract only the following fields.
+  // Show loading modal immediately
+  showLoadingModal();
 
-Return ONLY an <extracted_data> block with exactly these fields (use the exact label names):
-
-<extracted_data>
-<field><label>Date</label><value>date in DD.MM.YYYY format, or empty if not found</value></field>
-<field><label>Merchant</label><value>merchant/company name only (no address)</value></field>
-<field><label>City</label><value>city/town name from the receipt address</value></field>
-<field><label>Country</label><value>country name in English, e.g. Switzerland, Germany, USA</value></field>
-<field><label>Currency</label><value>3-letter ISO currency code, e.g. CHF, EUR, USD</value></field>
-<field><label>Total (gross)</label><value>total amount including tax, numeric only with 2 decimals</value></field>
-<field><label>VAT amount</label><value>tax amount, numeric only with 2 decimals, or 0.00 if not shown</value></field>
-<field><label>Total (net)</label><value>amount excluding tax (gross minus VAT), numeric only with 2 decimals</value></field>
-<field><label>VAT rate</label><value>tax rate as percentage, e.g. 8.1%, or empty if not determinable</value></field>
-</extracted_data>
-
-Rules:
-- Always output all 9 fields, even if the value is empty or 0.00
-- Numeric amounts: use period as decimal separator, no currency symbol, no thousands separator
-- If a value cannot be determined, leave the value empty`;
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1024,
-        temperature: 1,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: currentMimeType, data: currentImageBase64 } },
-            { type: 'text', text: prompt }
-          ]
-        }]
-      })
-    });
-
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.error?.message || `HTTP ${response.status}`);
-    }
-
-    const data = await response.json();
-    const text = data.content.map(b => b.text || '').join('');
-    renderResults(text);
-
-  } catch (err) {
-    results.innerHTML = `<div class="error-box"><strong>Error:</strong> ${escHtml(err.message)}</div>`;
-    results.classList.add('visible');
-  } finally {
+  // After 2 seconds, show overload message
+  setTimeout(() => {
+    showOverloadState();
+    // Reset button state
     analyzeBtn.disabled   = false;
     btnText.textContent   = 'Analyze';
-    spinner.style.display = 'none';
-  }
+    spinner.classList.add('hidden');
+  }, 2000);
 }
 
 // Helpers
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-const FIELDS = ['Date','Merchant','City','Country','Currency','Total (gross)','VAT amount','Total (net)','VAT rate'];
-
-function renderResults(text) {
-  const fieldRegex = /<field>\s*<label>([\s\S]*?)<\/label>\s*<value>([\s\S]*?)<\/value>\s*<\/field>/gi;
-  const map = {};
-  let m;
-  while ((m = fieldRegex.exec(text)) !== null) {
-    map[m[1].trim()] = m[2].trim();
-  }
-
-  const rowsHtml = FIELDS.map(label => `
-    <tr>
-      <td class="res-label">${escHtml(label)}</td>
-      <td class="res-value">${escHtml(map[label] || '—')}</td>
-    </tr>`).join('');
-
-  results.innerHTML = `
-    <div class="res-table-wrap">
-      <table class="res-table">
-        <thead><tr><th>Field</th><th>Value</th></tr></thead>
-        <tbody>${rowsHtml}</tbody>
-      </table>
-    </div>`;
-
-  previewWrap.classList.remove('visible');
-  results.classList.add('visible');
-  results.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 </script>
 </body>
