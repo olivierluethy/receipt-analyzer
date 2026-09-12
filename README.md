@@ -1,4 +1,17 @@
-# Receipt Analyzer
+<div align="center">
+  <img src="logo.png" alt="Receipt Analyzer logo" width="140" />
+  <h1>Receipt Analyzer</h1>
+  <p><b>Turn a photo of a receipt into clean, structured data — right in your browser.</b><br/>A single-file receipt scanner that reads merchant, date, line items, taxes and total using the Claude Vision API.</p>
+  <p>
+    <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
+    <img alt="HTML5" src="https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white">
+    <img alt="CSS3" src="https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white">
+    <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black">
+    <img alt="Claude" src="https://img.shields.io/badge/Claude%20Vision-D97757?logo=anthropic&logoColor=white">
+  </p>
+</div>
+
+---
 
 **Browser-based receipt scanner that turns a photo of a receipt into structured
 data** — using the Claude Vision API. Drop in a receipt image and get back the
@@ -40,4 +53,9 @@ Plain HTML, CSS and JavaScript · Claude Vision API (Anthropic).
 
 ## License
 
-See [`LICENSE`](LICENSE).
+Released under the [MIT License](LICENSE) © 2026 Olivier Lüthy. You're free to use, modify and distribute this
+software, including commercially, as long as the copyright notice and license are included.
+
+## Author
+
+Built by **Olivier Lüthy** — [GitHub](https://github.com/olivierluethy).
